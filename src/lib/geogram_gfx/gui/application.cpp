@@ -807,26 +807,39 @@ namespace GEO {
 
         } else {
 
-	    if(CmdLine::get_arg_bool("gfx:hidden")) {
-		glfwWindowHint(GLFW_VISIBLE,GL_FALSE);
-	    }
+	    // if(CmdLine::get_arg_bool("gfx:hidden")) {
+	    //   glfwWindowHint(GLFW_VISIBLE,GL_FALSE);
+	    // }
+
+	    glfwWindowHint(GLFW_VISIBLE,GL_FALSE);
 
             data_->window_ = glfwCreateWindow(
                 int(width_), int(height_), title, nullptr, nullptr
             );
 
-	    // seems that without the line below window cannot be made
-	    // larger than default monitor.
 	    if(data_->window_ != nullptr) {
+		// seems that without the line below window cannot be made
+		// larger than default monitor (for offscreen windows)
 		glfwSetWindowSize(data_->window_, int(width_), int(height_));
-		int monitor_id = CmdLine::get_arg_int("gfx:monitor");
-		if(monitor_id >= 0) {
-		    int nb_monitors;
-		    GLFWmonitor** monitors = glfwGetMonitors(&nb_monitors);
-		    if(monitor_id < nb_monitors) {
-			int ofsx, ofsy;
-			glfwGetMonitorPos(monitors[monitor_id], &ofsx, &ofsy);
-			glfwSetWindowPos(data_->window_, ofsx+100, ofsy+100);
+		if(!CmdLine::get_arg_bool("gfx:hidden")) {
+		    bool visible = false;
+		    int monitor_id = CmdLine::get_arg_int("gfx:monitor");
+		    if(monitor_id >= 0) {
+			int nb_monitors;
+			GLFWmonitor** monitors = glfwGetMonitors(&nb_monitors);
+			if(monitor_id < nb_monitors) {
+			    int ofsx, ofsy;
+			    glfwGetMonitorPos(
+				monitors[monitor_id], &ofsx, &ofsy
+			    );
+			    glfwSetWindowPos(data_->window_, ofsx+100, ofsy+100);
+			    glfwShowWindow(data_->window_);
+			    glfwSetWindowPos(data_->window_, ofsx+100, ofsy+100);
+			    visible = true;
+			}
+		    }
+		    if(!visible) {
+			glfwShowWindow(data_->window_);
 		    }
 		}
 	    }
