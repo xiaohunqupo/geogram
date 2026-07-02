@@ -1402,12 +1402,7 @@ namespace GEO {
         ) const {
             //   If no hint was specified, or the specified hint refers to a
             // tetrahedron that another thread freed/recycled in the meanwhile,
-            // find a tetrahedron randomly. Walking from a freed hint would
-            // immediately reach a deleted (or virtual) vertex slot and make
-            // this function -- and hence locate() -- give up; since the hint is
-            // not updated on failure, the insertion retry loop in run() would
-            // then spin on the same freed hint forever. Re-randomizing matches
-            // what locate() itself does when handed a freed hint.
+            // find a tetrahedron randomly.
             if(hint != NO_TETRAHEDRON && tet_is_free(hint)) {
                 hint = NO_TETRAHEDRON;
             }
@@ -1448,20 +1443,12 @@ namespace GEO {
                 for(index_t lv=0; lv<4; ++lv) {
                     index_t iv = tet_vertex(t,lv);
 
-                    //   Since we did not acquire any lock, another thread
-                    // may have modified this tetrahedron in the meanwhile:
-                    // it may have made it virtual (the vertex slot becomes
-                    // VERTEX_AT_INFINITY == NO_INDEX) or deleted and recycled
-                    // it (in debug builds the slots are then poisoned to
-                    // VERTEX_OF_DELETED_TET). These are the two transient
-                    // states that this lock-free walk is expected to see, so
-                    // we just exit (the caller then falls back to the exact,
-                    // lock-acquiring locate()).
-                    //   We test for these two sentinels specifically rather
-                    // than for iv >= nb_vertices(), so that any *other*
-                    // out-of-range index (which would be a genuine error, not
-                    // a benign race) still trips the assertion in vertex_ptr()
-                    // instead of being silently ignored here.
+
+		    // Since we did not acquire any lock,
+                    // it is possible that another threads made
+                    // this tetrahedron virtual (iv == NO_INDEX) or
+		    // deleted this tetrahedron (iv == VERTEX_OF_DELETED_TET)
+		    // (in both cases we exit immediately).
                     if(iv == NO_INDEX || iv == VERTEX_OF_DELETED_TET) {
                         return NO_TETRAHEDRON;
                     }
