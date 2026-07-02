@@ -170,7 +170,7 @@ namespace GEO {
         if(nb_ + nb > attributes_.size()) {
             index_t new_capacity=nb_ + nb;
             if(nb < 128) {
-                new_capacity = std::max(index_t(16),attributes_.size());
+                new_capacity = std::max(index_t(16),attributes_.capacity());
                 while(new_capacity < nb_ + nb) {
                     new_capacity *= 2;
                 }
