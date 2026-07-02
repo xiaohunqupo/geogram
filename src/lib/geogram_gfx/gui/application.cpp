@@ -832,6 +832,10 @@ namespace GEO {
 			    glfwGetMonitorPos(
 				monitors[monitor_id], &ofsx, &ofsy
 			    );
+			    Logger::out("GLFW") << "Monitor " << monitor_id
+						<< " pos="
+						<< ofsx << " " << ofsy
+						<< std::endl;
 			    glfwSetWindowPos(data_->window_, ofsx+100, ofsy+100);
 			    glfwShowWindow(data_->window_);
 			    glfwSetWindowPos(data_->window_, ofsx+100, ofsy+100);
