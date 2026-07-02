@@ -852,7 +852,7 @@ namespace {
      * \pre each p in P belongs to [lo,hi) and each i in I intersects [lo,hi)
      * \param[in] I a set of boxes
      * \param[in] P a set of boxes
-     * \param[in] report_isect the callback used to report intersections, takes
+     * \param[in] callback the callback used to report intersections, takes
      *  two integers, i and p
      */
     void hybrid(

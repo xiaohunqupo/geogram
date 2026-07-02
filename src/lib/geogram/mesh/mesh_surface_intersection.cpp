@@ -397,7 +397,7 @@ namespace GEO {
 			vector<index_t> group_size(32,0);
 			for(index_t f: mesh_.facets) {
 			    for(index_t g=0; g<32; ++g) {
-				if((operand_bit[f] == (1u << g))) {
+				if(operand_bit[f] == (1u << g)) {
 				    ++group_size[g];
 				} else if (!has_one_bit(operand_bit[f])) {
 				    has_facets_in_several_groups = true;
