@@ -45,6 +45,7 @@
 #include <geogram/basic/numeric.h>
 #include <geogram/basic/argused.h>
 #include <vector>
+#include <new>
 #include <string.h>
 #include <stdlib.h>
 
