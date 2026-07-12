@@ -416,7 +416,7 @@ namespace GEO {
         return W.v;
     }
 
-    // The two functions below are more complicated than I wished, but is
+    // The two functions below are more complicated than I wished, but are
     // simpler than it looks like. There are two main different cases:
     //
     // - walk_constraint_v(): we are on a vertex.
