@@ -3236,6 +3236,26 @@ namespace GEO {
         MeshElementsFlags what=MESH_ALL_ELEMENTS
     );
 
+    /**
+     * \brief Loads this mesh from a file.
+     * \details The file format is deduced from the extension. Supported
+     *  formats are those registered in the mesh I/O handlers
+     *  (.obj, .off, .ply, .stl, .mesh/.meshb, .geogram, ...).
+     *  Equivalent to mesh_load(filename, *this); implemented in
+     *  mesh_io.cpp.
+     * \param[in] filename the name of the file
+     * \retval true on success
+     */
+    bool load(const std::string& filename);
+
+    /**
+     * \brief Saves this mesh to a file.
+     * \details The file format is deduced from the extension.
+     *  Equivalent to mesh_save(*this, filename).
+     * \param[in] filename the name of the file
+     * \retval true on success
+     */
+    bool save(const std::string& filename) const;
 
     /**
      * \brief Gets the list of all attributes.
