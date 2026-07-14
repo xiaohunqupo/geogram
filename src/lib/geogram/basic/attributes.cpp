@@ -358,6 +358,44 @@ namespace GEO {
         return it->second;
     }
 
+    bool AttributesManager::get_doubles(
+        const std::string& name, vector<double>& out, index_t& dim
+    ) const {
+        const AttributeStore* store = find_attribute_store(name);
+        if(
+            store == nullptr ||
+            !store->elements_type_matches(typeid(double).name())
+        ) {
+            return false;
+        }
+        dim = store->dimension();
+        const double* p = static_cast<const double*>(store->data());
+        out.assign(p, p + store->size() * dim);
+        return true;
+    }
+
+    bool AttributesManager::set_doubles(
+        const std::string& name, const vector<double>& in, index_t dim
+    ) {
+        AttributeStore* store = find_attribute_store(name);
+        if(store == nullptr) {
+            if(in.size() != size_t(size()) * dim) {
+                return false;                    // do not create on size mismatch
+            }
+            store = new TypedAttributeStore<double>(dim);
+            bind_attribute_store(name, store);   // sizes it to size_, takes ownership
+        }
+        if(
+            !store->elements_type_matches(typeid(double).name()) ||
+            store->dimension() != dim ||
+            in.size() != size_t(store->size()) * dim
+        ) {
+            return false;
+        }
+        Memory::copy(store->data(), in.data(), in.size() * sizeof(double));
+        return true;
+    }
+
 
     void AttributesManager::delete_attribute_store(const std::string& name) {
         auto it = attributes_.find(name);
