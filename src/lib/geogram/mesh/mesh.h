@@ -107,7 +107,7 @@ namespace GEO {
      * \return a modifiable reference to the attributes manager.
      */
     AttributesManager& attributes() const {
-        return const_cast<AttributesManager&>(attributes_);
+        return attributes_;
     }
 
     /**
@@ -235,7 +235,7 @@ namespace GEO {
 
     protected:
     Mesh& mesh_;
-    AttributesManager attributes_;
+    mutable AttributesManager attributes_;
     index_t nb_;
     };
 
@@ -553,6 +553,32 @@ namespace GEO {
             geo_debug_assert(single_precision());
             return &point_fp32_[v*point_fp32_.dimension()];
         }
+
+        /**
+         * \brief Gets the coordinates of all the points as a single vector.
+         * \details The vector contains nb() * dimension() coordinates
+         *  [x0, y0, z0, x1, y1, z1, ...]. It is forbidden to change the
+         *  size of the returned vector; the reference is invalidated by
+         *  create_vertices() (same lifetime rule as point_ptr()).
+         * \return a const reference to the vector of all point coordinates.
+         * \pre !single_precision()
+         */
+        const vector<double>& point_coordinates() const {
+            geo_debug_assert(!single_precision());
+            return point_.get_vector();
+        }
+
+        /**
+         * \brief Gets the coordinates of all the points as a single vector.
+         * \return a modifiable reference to the vector of all point
+         *  coordinates (see the const overload for the contract).
+         * \pre !single_precision()
+         */
+        vector<double>& point_coordinates() {
+            geo_debug_assert(!single_precision());
+            return point_.get_vector();
+        }
+
 
         /**
          * \brief Assigns all the points.
@@ -1058,6 +1084,17 @@ namespace GEO {
         const index_t* vertex_index_ptr(index_t c) const {
             geo_debug_assert(c < nb());
             return &(corner_vertex_[c]);
+        }
+
+        /**
+         * \brief Gets the vertex indices of all corners as a single vector.
+         * \details On a triangulated mesh, this is the triangle list
+         *  (3 vertex indices per facet). It is forbidden to change the
+         *  size of the returned vector.
+         * \return a const reference to the corner-to-vertex table.
+         */
+        const vector<index_t>& vertex_indices() const {
+            return corner_vertex_;
         }
 
 	/**
@@ -3199,6 +3236,26 @@ namespace GEO {
         MeshElementsFlags what=MESH_ALL_ELEMENTS
     );
 
+    /**
+     * \brief Loads this mesh from a file.
+     * \details The file format is deduced from the extension. Supported
+     *  formats are those registered in the mesh I/O handlers
+     *  (.obj, .off, .ply, .stl, .mesh/.meshb, .geogram, ...).
+     *  Equivalent to mesh_load(filename, *this); implemented in
+     *  mesh_io.cpp.
+     * \param[in] filename the name of the file
+     * \retval true on success
+     */
+    bool load(const std::string& filename);
+
+    /**
+     * \brief Saves this mesh to a file.
+     * \details The file format is deduced from the extension.
+     *  Equivalent to mesh_save(*this, filename).
+     * \param[in] filename the name of the file
+     * \retval true on success
+     */
+    bool save(const std::string& filename) const;
 
     /**
      * \brief Gets the list of all attributes.

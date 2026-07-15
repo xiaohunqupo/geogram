@@ -1043,6 +1043,25 @@ namespace GEO {
     AttributeStore* find_attribute_store(const std::string& name);
 
     /**
+     * \brief Reads a double-typed attribute into a vector.
+     * \param[out] out receives size() * dim values.
+     * \param[out] dim the dimension of the attribute.
+     * \retval false if no attribute \p name exists or it is not double-typed.
+     */
+    bool get_doubles(
+        const std::string& name, vector<double>& out, index_t& dim
+    ) const;
+
+    /**
+     * \brief Writes a double-typed attribute, creating it if needed.
+     * \retval false on type or size mismatch
+     *  (in.size() must be size() * dim).
+     */
+    bool set_doubles(
+        const std::string& name, const vector<double>& in, index_t dim
+    );
+
+    /**
      * \brief Finds an AttributeStore by name.
      * \param[in] name the name under which the AttributeStore was bound
      * \return a const pointer to the attribute store or nullptr if is is

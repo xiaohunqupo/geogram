@@ -5114,4 +5114,12 @@ namespace GEO {
         return geogram.save(M, geofile, ioflags);
     }
 
+    bool Mesh::load(const std::string& filename) {
+        return mesh_load(filename, *this);
+    }
+
+    bool Mesh::save(const std::string& filename) const {
+        return mesh_save(*this, filename);
+    }
+
 }
